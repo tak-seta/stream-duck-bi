@@ -1,0 +1,18 @@
+[project]
+name = "StreamDuck-BI"
+version = "0.1.0"
+description = "Add your description here"
+authors = []
+dependencies = [
+    "streamlit>=1.35.0",
+    "duckdb>=1.0.0",
+    "polars[pyarrow]>=0.20.31",
+]
+readme = "README.md"
+requires-python = ">= 3.12"
+
+[tool.rye]
+managed = true
+dev-dependencies = [
+    "ruff>=0.4.2",
+]
