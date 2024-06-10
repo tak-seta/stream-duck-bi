@@ -9,23 +9,22 @@ st.title("DuckDBとStreamlitによるBIツール")
 uploaded_file = st.file_uploader("CSVファイルをアップロードしてください", type="csv")
 
 if uploaded_file is not None:
-    table_name = uploaded_file.name.split(".")[0]
-    st.write("作成されたテーブル名:", table_name)
-
     # CSVをPolars DataFrameに読み込む
     uploaded_data = pl.read_csv(uploaded_file)
 
-    # DuckDBにテーブルを作成しデータをロードする
+    # アップロードされたデータの表示
+    st.write("アップロードされたデータ:")
+    st.dataframe(uploaded_data, hide_index=True)
+
+    # データベース接続
     con = duckdb.connect()
 
-    # SQL injection対策のため、テーブル名をパラメータとして渡してクエリを実行
+    table_name = st.text_input("テーブル名を入力してください")
+    if not table_name:
+        st.stop()
+
     table_create_query = f"CREATE OR REPLACE TABLE {table_name} AS SELECT * FROM uploaded_data"  # noqa: S608
-
     con.execute(table_create_query)
-
-    # データの表示
-    st.write("アップロードされたデータ:")
-    st.write(uploaded_data)
 
     # SQLクエリの入力
     query = st.text_area("DuckDB SQLクエリを入力してください")
@@ -35,7 +34,7 @@ if uploaded_file is not None:
             result = con.execute(query).fetchdf()
             result_pl = pl.from_pandas(result)
             st.write("クエリ結果:")
-            st.write(result_pl)
+            st.dataframe(result_pl, hide_index=True)
 
             # CSVダウンロードリンクの生成
             csv = result_pl.write_csv()
