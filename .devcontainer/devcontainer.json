@@ -4,6 +4,10 @@
     "context": "..",
     "dockerfile": "Dockerfile"
   },
+  "mounts": [
+    {"source": "${localEnv:HOME}/.aws", "target": "/home/vscode/.aws","type": "bind"}
+  ],
+  "runArgs": ["--env-file",".env"],
   "customizations": {
     "vscode": {
       "extensions": [
