@@ -1,6 +1,11 @@
+import os
+
 import duckdb
 import polars as pl
 import streamlit as st
+from infrastructure.s3_handler import S3Handler
+
+s3 = S3Handler(bucket_name=os.environ.get("S3_BUCKET"))
 
 # Streamlitアプリの設定
 st.title("DuckDBとStreamlitによるBIツール")
@@ -15,6 +20,11 @@ if uploaded_file is not None:
     # アップロードされたデータの表示
     st.write("アップロードされたデータ:")
     st.dataframe(uploaded_data, hide_index=True)
+
+    if st.button("S3に保存"):
+        # S3にファイルをアップロード
+        s3.upload_file(uploade_file_object=uploaded_file, key=uploaded_file.name)
+        st.write("ファイルをS3にアップロードしました")
 
     # データベース接続
     con = duckdb.connect()
