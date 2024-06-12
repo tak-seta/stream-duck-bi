@@ -16,5 +16,5 @@ rye sync
 ## アプリケーション(Streamlit)の起動
 ### 開発環境
 ```
-rye run streamlit run app.py
+rye run streamlit run src/app.py
 ```
