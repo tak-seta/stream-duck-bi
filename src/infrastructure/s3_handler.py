@@ -17,7 +17,7 @@ class S3Handler:  # noqa: D101
         self.bucket_name = bucket_name
         self.region = session.region_name
 
-    def upload_file(self, uploade_file_object: object, key: str) -> None:  # noqa: ANN101
+    def upload_file(self, upload_file_object: object, key: str) -> None:  # noqa: ANN101
         """Upload a file to the S3 bucket.
 
         Args:
@@ -30,7 +30,7 @@ class S3Handler:  # noqa: D101
             None
 
         """
-        self.s3.upload_fileobj(uploade_file_object, self.bucket_name, key)
+        self.s3.upload_fileobj(upload_file_object, self.bucket_name, key)
 
     def list_files(self) -> list:  # noqa: ANN101
         """List all files in the S3 bucket.

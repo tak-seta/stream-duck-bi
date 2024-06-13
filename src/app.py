@@ -23,7 +23,7 @@ if uploaded_file is not None:
 
     if st.button("S3に保存"):
         # S3にファイルをアップロード
-        s3.upload_file(uploade_file_object=uploaded_file, key=uploaded_file.name)
+        s3.upload_file(upload_file_object=uploaded_file, key=uploaded_file.name)
         st.write("ファイルをS3にアップロードしました")
 
     # データベース接続
