@@ -7,6 +7,9 @@ from infrastructure.s3_handler import S3Handler
 
 s3 = S3Handler(bucket_name=os.environ.get("S3_BUCKET"))
 
+if "show_query_area" not in st.session_state:
+    st.session_state["show_query_area"] = False
+
 # Streamlitアプリの設定
 st.title("DuckDBとStreamlitによるBIツール")
 
@@ -21,15 +24,23 @@ if uploaded_file is not None:
     st.write("アップロードされたデータ:")
     st.dataframe(uploaded_data, hide_index=True)
 
-    if st.button("S3に保存"):
-        # S3にファイルをアップロード
-        s3.upload_file(upload_file_object=uploaded_file, key=uploaded_file.name)
-        st.write("ファイルをS3にアップロードしました")
+    col1, col2 = st.columns(2)
 
+    with col1:
+        if st.button("S3に保存", use_container_width=True):
+            # S3にファイルをアップロード
+            s3.upload_file(upload_file_object=uploaded_file, key=uploaded_file.name)
+            st.write("ファイルをS3にアップロードしました")
+
+    with col2:
+        if st.button("SQLを作成", use_container_width=True):
+            st.session_state["show_query_area"] = not st.session_state["show_query_area"]
+
+if st.session_state["show_query_area"]:
     # データベース接続
     con = duckdb.connect()
 
-    table_name = st.text_input("テーブル名を入力してください")
+    table_name = st.text_input("SQLを作成する際のテーブル名を入力してください")
     if not table_name:
         st.stop()
 
@@ -37,7 +48,7 @@ if uploaded_file is not None:
     con.execute(table_create_query)
 
     # SQLクエリの入力
-    query = st.text_area("DuckDB SQLクエリを入力してください")
+    query = st.text_area("SQLクエリを入力してください")
 
     if query:
         try:
