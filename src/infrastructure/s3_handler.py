@@ -22,7 +22,7 @@ class S3Handler:  # noqa: D101
 
         Args:
         ----
-            uploade_file_object (object): The file object to upload.
+            upload_file_object (object): The file object to upload.
             key (str): The key to use for the uploaded file.
 
         Returns:
