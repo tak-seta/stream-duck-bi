@@ -31,6 +31,8 @@ click==8.1.7
     # via streamlit
 duckdb==1.0.0
     # via streamduck-bi
+fsspec==2024.6.0
+    # via streamduck-bi
 gitdb==4.0.11
     # via gitpython
 gitpython==3.1.43

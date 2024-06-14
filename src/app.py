@@ -5,6 +5,9 @@ import polars as pl
 import streamlit as st
 from infrastructure.s3_handler import S3Handler
 
+# データベース接続
+con = duckdb.connect()
+
 s3 = S3Handler(bucket_name=os.environ.get("S3_BUCKET"))
 
 if "show_query_area" not in st.session_state:
@@ -18,11 +21,11 @@ uploaded_file = st.file_uploader("CSVファイルをアップロードしてく�
 
 if uploaded_file is not None:
     # CSVをPolars DataFrameに読み込む
-    uploaded_data = pl.read_csv(uploaded_file)
+    uploaded_data = con.read_csv(uploaded_file)
 
     # アップロードされたデータの表示
     st.write("アップロードされたデータ:")
-    st.dataframe(uploaded_data, hide_index=True)
+    st.dataframe(uploaded_data.pl(), hide_index=True)
 
     col1, col2 = st.columns(2)
 
@@ -37,15 +40,11 @@ if uploaded_file is not None:
             st.session_state["show_query_area"] = not st.session_state["show_query_area"]
 
 if st.session_state["show_query_area"]:
-    # データベース接続
-    con = duckdb.connect()
-
     table_name = st.text_input("SQLを作成する際のテーブル名を入力してください")
     if not table_name:
         st.stop()
 
-    table_create_query = f"CREATE OR REPLACE TABLE {table_name} AS SELECT * FROM uploaded_data"  # noqa: S608
-    con.execute(table_create_query)
+    uploaded_data.create(table_name)
 
     # SQLクエリの入力
     query = st.text_area("SQLクエリを入力してください")
