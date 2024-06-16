@@ -6,7 +6,7 @@ services:
     volumes:
       - .:/app
     networks:
-      iceberg_net:
+      stream_duck_net:
     depends_on:
       - minio
     environment:
@@ -24,7 +24,7 @@ services:
       - MINIO_DOMAIN=$MINIO_DOMAIN
       - TZ=$TZ
     networks:
-      iceberg_net:
+      stream_duck_net:
         aliases:
           - warehouse.minio
     ports:
@@ -37,7 +37,7 @@ services:
     image: minio/mc
     container_name: mc
     networks:
-      iceberg_net:
+      stream_duck_net:
     environment:
       - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
@@ -51,4 +51,4 @@ services:
       tail -f /dev/null
       "
 networks:
-  iceberg_net:
+  stream_duck_net:
