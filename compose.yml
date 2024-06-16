@@ -10,6 +10,8 @@ services:
     depends_on:
       - minio
     environment:
+      - MINIO_ACCESS_KEY_ID=$MINIO_ACCESS_KEY_ID
+      - MINIO_SECRET_ACCESS_KEY=$MINIO_SECRET_ACCESS_KEY
       - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
       - AWS_REGION=$AWS_REGION
@@ -39,8 +41,8 @@ services:
     networks:
       stream_duck_net:
     environment:
-      - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-      - AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+      - AWS_ACCESS_KEY_ID=$MINIO_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY=$MINIO_SECRET_ACCESS_KEY
       - AWS_REGION=$AWS_REGION
     entrypoint: >
       /bin/sh -c "

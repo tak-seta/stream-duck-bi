@@ -12,13 +12,26 @@ class S3Handler:  # noqa: D101
             bucket_name (str): The name of the S3 bucket.
 
         """
-        self.s3 = boto3.client(
-            "s3",
-            endpoint_url="http://minio:9000",
-            aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
-            aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
-            verify=False,
-        )
+        # 環境に応じた設定を読み込む
+        # 環境(s3 or minio、デフォルトはminio)
+        environment = os.getenv("ENVIRONMENT", "minio")
+
+        # 環境に応じたclientを生成
+        if environment == "s3":
+            self.s3 = boto3.client(
+                "s3",
+                aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
+                aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
+            )
+        else:
+            self.s3 = boto3.client(
+                "s3",
+                endpoint_url="http://minio:9000",
+                aws_access_key_id=os.environ.get("MINIO_ACCESS_KEY_ID"),
+                aws_secret_access_key=os.environ.get("MINIO_SECRET_ACCESS_KEY"),
+                verify=False,
+            )
+
         self.bucket_name = bucket_name
 
     def upload_file(self, upload_file_object: object, key: str) -> None:  # noqa: ANN101
