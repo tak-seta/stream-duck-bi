@@ -12,10 +12,14 @@ class S3Handler:  # noqa: D101
             bucket_name (str): The name of the S3 bucket.
 
         """
-        session = boto3.session.Session(profile_name=os.environ.get("AWS_PROFILE"))
-        self.s3 = session.client("s3")
+        self.s3 = boto3.client(
+            "s3",
+            endpoint_url="http://minio:9000",
+            aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
+            aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
+            verify=False,
+        )
         self.bucket_name = bucket_name
-        self.region = session.region_name
 
     def upload_file(self, upload_file_object: object, key: str) -> None:  # noqa: ANN101
         """Upload a file to the S3 bucket.
