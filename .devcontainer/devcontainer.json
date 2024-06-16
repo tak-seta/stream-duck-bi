@@ -1,28 +1,21 @@
 {
   "name": "StreamDuck-BI",
-  "build": {
-    "context": "..",
-    "dockerfile": "Dockerfile"
-  },
-  "mounts": [
-    {"source": "${localEnv:HOME}/.aws", "target": "/home/vscode/.aws","type": "bind"}
-  ],
-  "runArgs": ["--env-file",".env"],
+  "dockerComposeFile": "../compose.yml",
+  "service": "stream-duck-bi",
+  "workspaceFolder": "/app",
+  "shutdownAction": "stopCompose",
   "customizations": {
     "vscode": {
-      "extensions": [
-        "ms-python.python",
-        "charliermarsh.ruff"
-      ],
+      "extensions": ["ms-python.python", "charliermarsh.ruff"],
       "settings": {
         "python.defaultInterpreterPath": "/opt/rye/shims/python",
         "[python]": {
-            "editor.defaultFormatter": "charliermarsh.ruff",
-            "editor.codeActionsOnSave": {
-                "source.fixAll.ruff": "explicit",
-                "source.organizeImports.ruff": "explicit"
-            },
-            "editor.formatOnSave": true
+          "editor.defaultFormatter": "charliermarsh.ruff",
+          "editor.codeActionsOnSave": {
+            "source.fixAll.ruff": "explicit",
+            "source.organizeImports.ruff": "explicit"
+          },
+          "editor.formatOnSave": true
         },
         "files.insertFinalNewline": true,
         "files.trimTrailingWhitespace": true,
@@ -34,6 +27,5 @@
         }
       }
     }
-  },
-  "remoteUser": "vscode"
+  }
 }
