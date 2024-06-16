@@ -21,7 +21,7 @@ COPY ./.python-version ./pyproject.toml ./requirements* ./
 RUN rye pin "$(cat .python-version)" && \
     rye sync
 
-FROM mcr.microsoft.com/vscode/devcontainers/base:bullseye
+FROM python:3.12-bullseye
 
 COPY --from=builder /opt/rye /opt/rye
 
@@ -31,5 +31,3 @@ ENV PYTHONUNBUFFERED True
 
 RUN rye config --set-bool behavior.global-python=true && \
     rye config --set-bool behavior.use-uv=true
-
-RUN chown -R vscode $RYE_HOME
