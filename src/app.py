@@ -8,6 +8,25 @@ from infrastructure.s3_handler import S3Handler
 # データベース接続
 con = duckdb.connect()
 
+# DuckDBのHTTPFS拡張をロード
+con.sql("INSTALL httpfs;")
+con.sql("LOAD httpfs;")
+
+environment = os.getenv("ENVIRONMENT", "minio")
+if environment == "minio":
+    con.sql(
+        f"""
+        CREATE SECRET minio (
+            TYPE S3,
+            KEY_ID {os.environ.get("MINIO_ACCESS_KEY_ID")},
+            SECRET {os.environ.get("MINIO_SECRET_ACCESS_KEY")},
+            ENDPOINT 'minio:9000',
+            URL_STYLE vhost,
+            USE_SSL false
+        );
+        """
+    )
+
 s3 = S3Handler(bucket_name=os.environ.get("S3_BUCKET"))
 
 if "show_query_area" not in st.session_state:
@@ -30,9 +49,10 @@ if uploaded_file is not None:
     col1, col2 = st.columns(2)
 
     with col1:
-        if st.button("S3に保存", use_container_width=True):
+        if st.button("S3に保存", key="upload_data", use_container_width=True):
             # S3にファイルをアップロード
-            s3.upload_file(upload_file_object=uploaded_file, key=uploaded_file.name)
+            file_name = uploaded_file.name.split(".")[0]
+            con.sql(f"COPY uploaded_data TO 's3://warehouse/{file_name}.parquet';")
             st.write("ファイルをS3にアップロードしました")
 
     with col2:
