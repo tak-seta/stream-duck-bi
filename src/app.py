@@ -76,13 +76,23 @@ if st.session_state["show_query_area"]:
             st.write("クエリ結果:")
             st.dataframe(result_pl, hide_index=True)
 
-            # CSVダウンロードリンクの生成
-            csv = result_pl.write_csv()
-            st.download_button(
-                label="CSVファイルとしてダウンロード",
-                data=csv,
-                file_name="query_result.csv",
-                mime="text/csv",
-            )
+            col3, col4 = st.columns(2)
+
+            with col3:
+                if st.button("S3に保存", key="query_result", use_container_width=True):
+                    # S3にファイルをアップロード
+                    con.sql(f"COPY uploaded_data TO 's3://warehouse/{table_name}.parquet';")
+                    st.write("ファイルをS3にアップロードしました")
+
+            with col4:
+                # CSVダウンロードリンクの生成
+                csv = result_pl.write_csv()
+                st.download_button(
+                    label="CSVファイルとしてダウンロード",
+                    data=csv,
+                    file_name="query_result.csv",
+                    mime="text/csv",
+                    use_container_width=True,
+                )
         except Exception as e:
             st.error(f"クエリの実行中にエラーが発生しました: {e}")
