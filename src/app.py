@@ -12,11 +12,16 @@ con = duckdb.connect()
 con.sql("INSTALL httpfs;")
 con.sql("LOAD httpfs;")
 
-environment = os.getenv("ENVIRONMENT", "minio")
-bucket_name = os.getenv("S3_BUCKET", "warehouse")
-region = os.getenv("AWS_REGION", "ap-northeast-1")
+# Streamlitアプリの設定
+st.title("DuckDBとStreamlitによるBIツール")
 
-if environment == "s3":
+storage = st.selectbox("Storage", ["minio", "s3"])
+
+# S3への接続に必要な情報を入力
+if storage == "s3":
+    # S3への接続に必要な情報を入力
+    bucket_name = st.text_input("Bucket Name", value="warehouse")
+    region = st.text_input("Region", value="ap-northeast-1")
     con.sql(
         f"""
         CREATE SECRET aws (
@@ -29,6 +34,8 @@ if environment == "s3":
         """
     )
 else:
+    bucket_name = os.environ.get("MINIO_BUCKET")
+
     # https://duckdb.org/docs/extensions/httpfs/s3api
     con.sql(
         f"""
@@ -47,9 +54,6 @@ s3 = S3Handler(bucket_name=os.environ.get("S3_BUCKET"))
 
 if "show_query_area" not in st.session_state:
     st.session_state["show_query_area"] = False
-
-# Streamlitアプリの設定
-st.title("DuckDBとStreamlitによるBIツール")
 
 # ファイルアップロードセクション
 uploaded_file = st.file_uploader("CSVファイルをアップロードしてください", type="csv")
