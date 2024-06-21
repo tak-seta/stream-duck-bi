@@ -13,7 +13,23 @@ con.sql("INSTALL httpfs;")
 con.sql("LOAD httpfs;")
 
 environment = os.getenv("ENVIRONMENT", "minio")
-if environment == "minio":
+bucket_name = os.getenv("S3_BUCKET", "warehouse")
+region = os.getenv("AWS_REGION", "ap-northeast-1")
+
+if environment == "s3":
+    con.sql(
+        f"""
+        CREATE SECRET aws (
+            TYPE S3,
+            KEY_ID '{os.environ.get("AWS_ACCESS_KEY_ID")}',
+            SECRET '{os.environ.get("AWS_SECRET_ACCESS_KEY")}',
+            REGION '{region}',
+            ENDPOINT 's3.{region}.amazonaws.com'
+        );
+        """
+    )
+else:
+    # https://duckdb.org/docs/extensions/httpfs/s3api
     con.sql(
         f"""
         CREATE SECRET minio (
@@ -52,7 +68,7 @@ if uploaded_file is not None:
         if st.button("S3に保存", key="upload_data", use_container_width=True):
             # S3にファイルをアップロード
             file_name = uploaded_file.name.split(".")[0]
-            con.sql(f"COPY uploaded_data TO 's3://warehouse/{file_name}.parquet';")
+            con.sql(f"COPY uploaded_data TO 's3://{bucket_name}/{file_name}.parquet';")
             st.write("ファイルをS3にアップロードしました")
 
     with col2:
@@ -81,7 +97,7 @@ if st.session_state["show_query_area"]:
             with col3:
                 if st.button("S3に保存", key="query_result", use_container_width=True):
                     # S3にファイルをアップロード
-                    con.sql(f"COPY uploaded_data TO 's3://warehouse/{table_name}.parquet';")
+                    con.sql(f"COPY uploaded_data TO 's3://{bucket_name}/{table_name}.parquet';")
                     st.write("ファイルをS3にアップロードしました")
 
             with col4:
