@@ -22,6 +22,9 @@ if storage == "s3":
     # S3への接続に必要な情報を入力
     bucket_name = st.text_input("Bucket Name", value="warehouse")
     region = st.text_input("Region", value="ap-northeast-1")
+
+    # https://duckdb.org/docs/extensions/httpfs/s3api
+    # REGIONとENDPOINTはセットで指定する必要がある
     con.sql(
         f"""
         CREATE SECRET aws (
