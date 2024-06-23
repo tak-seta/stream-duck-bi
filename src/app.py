@@ -101,7 +101,7 @@ if st.session_state["show_query_area"]:
             with col3:
                 if st.button("S3に保存", key="query_result", use_container_width=True):
                     # S3にファイルをアップロード
-                    con.sql(f"COPY uploaded_data TO 's3://{bucket_name}/{table_name}.parquet';")
+                    con.sql(f"COPY result TO 's3://{bucket_name}/{table_name}.parquet';")
                     st.write("ファイルをS3にアップロードしました")
 
             with col4:
