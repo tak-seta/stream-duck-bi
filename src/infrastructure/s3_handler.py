@@ -34,21 +34,6 @@ class S3Handler:  # noqa: D101
 
         self.bucket_name = bucket_name
 
-    def upload_file(self, upload_file_object: object, key: str) -> None:  # noqa: ANN101
-        """Upload a file to the S3 bucket.
-
-        Args:
-        ----
-            upload_file_object (object): The file object to upload.
-            key (str): The key to use for the uploaded file.
-
-        Returns:
-        -------
-            None
-
-        """
-        self.s3.upload_fileobj(upload_file_object, self.bucket_name, key)
-
     def list_files(self) -> list:  # noqa: ANN101
         """List all files in the S3 bucket.
 
