@@ -33,7 +33,7 @@ uploaded_file = st.file_uploader("CSVファイルをアップロードしてく�
 
 if uploaded_file is not None:
     # CSVをPolars DataFrameに読み込む
-    uploaded_data = db.conn.read_csv(uploaded_file)
+    uploaded_data = db.load_uploaded_data(uploaded_file)
 
     # アップロードされたデータの表示
     st.write("アップロードされたデータ:")
@@ -45,8 +45,7 @@ if uploaded_file is not None:
         if st.button("S3に保存", key="upload_data", use_container_width=True):
             # S3にファイルをアップロード
             file_name = uploaded_file.name.split(".")[0]
-            db.conn.sql(f"COPY uploaded_data TO 's3://{bucket_name}/{file_name}.parquet';")
-            st.write("ファイルをS3にアップロードしました")
+            db.upload_data_to_s3(bucket_name, file_name, uploaded_data)
 
     with col2:
         if st.button("SQLを作成", use_container_width=True):
@@ -74,8 +73,7 @@ if st.session_state["show_query_area"]:
             with col3:
                 if st.button("S3に保存", key="query_result", use_container_width=True):
                     # S3にファイルをアップロード
-                    db.conn.sql(f"COPY result TO 's3://{bucket_name}/{table_name}.parquet';")
-                    st.write("ファイルをS3にアップロードしました")
+                    db.upload_data_to_s3(bucket_name, table_name, result_pl)
 
             with col4:
                 # CSVダウンロードリンクの生成
