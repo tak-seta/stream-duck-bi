@@ -4,20 +4,10 @@ import boto3
 
 
 class S3Handler:  # noqa: D101
-    def __init__(self, bucket_name: str) -> None:  # noqa: ANN101
-        """Initialize the S3Handler object.
-
-        Args:
-        ----
-            bucket_name (str): The name of the S3 bucket.
-
-        """
-        # 環境に応じた設定を読み込む
-        # 環境(s3 or minio、デフォルトはminio)
-        environment = os.getenv("ENVIRONMENT", "minio")
-
-        # 環境に応じたclientを生成
-        if environment == "s3":
+    def __init__(self, storage_type: str) -> None:  # noqa: ANN101
+        """Initialize the S3Handler object."""
+        # 環境(s3 or minio)に応じて、clientを生成
+        if storage_type == "s3":
             self.s3 = boto3.client(
                 "s3",
                 aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
@@ -32,9 +22,7 @@ class S3Handler:  # noqa: D101
                 verify=False,
             )
 
-        self.bucket_name = bucket_name
-
-    def list_files(self) -> list:  # noqa: ANN101
+    def list_files(self, bucket_name) -> list:  # noqa: ANN101
         """List all files in the S3 bucket.
 
         Returns
@@ -42,6 +30,6 @@ class S3Handler:  # noqa: D101
             list: A list of file names.
 
         """
-        s3_files = self.s3.list_objects_v2(Bucket=self.bucket_name).get("Contents", [])
+        s3_files = self.s3.list_objects_v2(Bucket=bucket_name).get("Contents", [])
 
         return [file["Key"] for file in s3_files]
