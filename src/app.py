@@ -12,7 +12,7 @@ st.title("DuckDBとStreamlitによるBIツール")
 
 storage = st.selectbox("Storage", ["minio", "s3"])
 
-# S3への接続に必要な情報を入力
+# 指定したストレージごとの設定と接続
 if storage == "s3":
     # S3への接続に必要な情報を入力
     bucket_name = st.text_input("Bucket Name", value="warehouse")
@@ -24,7 +24,6 @@ else:
     bucket_name = os.environ.get("MINIO_BUCKET")
     db.connect_storage(storage, None)
 
-
 if "show_query_area" not in st.session_state:
     st.session_state["show_query_area"] = False
 
@@ -32,7 +31,7 @@ if "show_query_area" not in st.session_state:
 uploaded_file = st.file_uploader("CSVファイルをアップロードしてください", type="csv")
 
 if uploaded_file is not None:
-    # CSVをPolars DataFrameに読み込む
+    # CSVをDataFrameに読み込む
     uploaded_data = db.load_uploaded_data(uploaded_file)
 
     # アップロードされたデータの表示
