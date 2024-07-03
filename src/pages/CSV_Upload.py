@@ -1,11 +1,23 @@
-import os
+import os  # noqa: INP001
 
 import polars as pl
 import streamlit as st
 from infrastructure.duckdb import DuckDB
 
 
-def connect_to_storage(storage: str, db) -> tuple:
+def connect_to_storage(storage: str, db: DuckDB) -> tuple:
+    """Connect to the storage and returns the bucket name.
+
+    Args:
+    ----
+        storage (str): The type of storage.
+        db (DuckDB): The DuckDB instance.
+
+    Returns:
+    -------
+        tuple: The bucket name.
+
+    """
     if storage == "s3":
         bucket_name = st.text_input("Bucket Name", value="warehouse")
         region = st.text_input("Region", value="ap-northeast-1")
@@ -16,7 +28,26 @@ def connect_to_storage(storage: str, db) -> tuple:
     return bucket_name
 
 
-def upload_file_process(uploaded_data, bucket_name: str, file_name: str, db) -> None:
+def upload_file_process(
+    uploaded_data: pl.DataFrame, bucket_name: str, file_name: str, db: DuckDB
+) -> None:
+    """Process the uploaded file and save it to an S3 or Minio bucket.
+
+    Display the uploaded data and allow the user to choose whether to save the data to S3 or create
+    an SQL query.
+
+    Args:
+    ----
+        uploaded_data (pl.DataFrame): The uploaded data as a polars DataFrame.
+        bucket_name (str): The name of the bucket to save the data.
+        file_name (str): The name of the file to save.
+        db (DuckDB): The DuckDB instance.
+
+    Returns:
+    -------
+        None
+
+    """
     st.write("アップロードされたデータ:")
     st.dataframe(uploaded_data.pl(), hide_index=True)
     col1, col2 = st.columns(2)
@@ -28,7 +59,23 @@ def upload_file_process(uploaded_data, bucket_name: str, file_name: str, db) -> 
             st.session_state["show_query_area"] = not st.session_state["show_query_area"]
 
 
-def execute_query_process(uploaded_data, table_name: str, bucket_name: str, db) -> None:
+def execute_query_process(
+    uploaded_data: pl.DataFrame, table_name: str, bucket_name: str, db: DuckDB
+) -> None:
+    """Execute a SQL query and performs actions based on the query result.
+
+    Args:
+    ----
+        uploaded_data (pl.DataFrame): The uploaded data as a polars DataFrame.
+        table_name (str): The name of the table to create from the uploaded data.
+        bucket_name (str): The name of the S3 bucket to upload the query result to.
+        db (DuckDB): The DuckDB instance.
+
+    Returns:
+    -------
+        None
+
+    """
     uploaded_data.create(table_name)
     query = st.text_area("SQLクエリを入力してください")
     if query:
@@ -54,7 +101,8 @@ def execute_query_process(uploaded_data, table_name: str, bucket_name: str, db) 
             st.error(f"クエリの実行中にエラーが発生しました: {e}")
 
 
-def csv_uploader() -> None:
+def csv_upload() -> None:
+    """Perform CSV upload ,save to storage and query execution."""
     # データベース接続
     db = DuckDB()
 
@@ -87,4 +135,4 @@ def csv_uploader() -> None:
 
 
 if __name__ == "__main__":
-    csv_uploader()
+    csv_upload()
