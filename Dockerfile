@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim as builder
+FROM debian:bookworm-slim as rye
 
 WORKDIR /opt
 
@@ -21,9 +21,9 @@ COPY ./.python-version ./pyproject.toml ./requirements* ./
 RUN rye pin "$(cat .python-version)" && \
     rye sync
 
-FROM python:3.12-bullseye
+FROM rye as dev
 
-COPY --from=builder /opt/rye /opt/rye
+COPY --from=rye /opt/rye /opt/rye
 
 ENV RYE_HOME="/opt/rye"
 ENV PATH="$RYE_HOME/shims:$PATH"

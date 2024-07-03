@@ -1,10 +1,11 @@
 services:
   stream-duck-bi:
     build:
-      context: .
+      context: ..
       dockerfile: Dockerfile
+      target: dev
     volumes:
-      - .:/app
+      - ..:/app
     networks:
       stream_duck_net:
     depends_on:

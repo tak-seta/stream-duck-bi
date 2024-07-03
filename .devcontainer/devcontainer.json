@@ -1,6 +1,6 @@
 {
   "name": "StreamDuck-BI",
-  "dockerComposeFile": "../compose.yml",
+  "dockerComposeFile": "./compose.yml",
   "service": "stream-duck-bi",
   "workspaceFolder": "/app",
   "shutdownAction": "stopCompose",
