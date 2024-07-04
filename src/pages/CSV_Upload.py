@@ -3,6 +3,7 @@ import os  # noqa: INP001
 import polars as pl
 import streamlit as st
 from infrastructure.duckdb import DuckDB
+from page_link import page_link
 
 
 def connect_to_storage(storage: str, db: DuckDB) -> tuple:
@@ -103,6 +104,9 @@ def execute_query_process(
 
 def csv_upload() -> None:
     """Perform CSV upload ,save to storage and query execution."""
+    # サイドバーにページリンクを表示
+    page_link()
+
     # データベース接続
     db = DuckDB()
 

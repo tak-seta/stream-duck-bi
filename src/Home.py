@@ -1,9 +1,12 @@
 import streamlit as st  # noqa: N999
+from page_link import page_link
 
 
 def home() -> None:
     """Display the home page of the Streamlit app."""
-    # Streamlitアプリの設定
+    # サイドバーにページリンクを表示
+    page_link()
+
     st.title("DuckDBとStreamlitによるBIツール")
 
 
