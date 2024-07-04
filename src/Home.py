@@ -1,4 +1,4 @@
-import streamlit as st  # noqa: N999
+import streamlit as st
 from page_link import page_link
 
 

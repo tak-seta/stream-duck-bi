@@ -6,7 +6,7 @@ from infrastructure.duckdb import DuckDB
 from page_link import page_link
 
 
-def connect_to_storage(storage: str, db: DuckDB) -> tuple:
+def connect_to_storage(storage: str, db: DuckDB) -> str:
     """Connect to the storage and returns the bucket name.
 
     Args:
@@ -16,7 +16,7 @@ def connect_to_storage(storage: str, db: DuckDB) -> tuple:
 
     Returns:
     -------
-        tuple: The bucket name.
+        str: The bucket name.
 
     """
     if storage == "s3":
@@ -124,7 +124,7 @@ def csv_upload() -> None:
     # ファイルアップロードセクション
     uploaded_file = st.file_uploader("CSVファイルをアップロードしてください", type="csv")
     if uploaded_file is not None:
-        uploaded_data = db.load_uploaded_data(uploaded_file)
+        uploaded_data = db.load_uploaded_csv_file(uploaded_file)
         file_name = uploaded_file.name.split(".")[0]
         upload_file_process(uploaded_data, bucket_name, file_name, db)
 

@@ -48,7 +48,7 @@ class DuckDB:
                 """
             )
 
-    def load_uploaded_data(self: "DuckDB", uploaded_file: bytes) -> pl.DataFrame:
+    def load_uploaded_csv_file(self: "DuckDB", uploaded_file: bytes) -> pl.DataFrame:
         """Load the uploaded file and transform to DataFrame."""
         return self.conn.read_csv(uploaded_file)
 
